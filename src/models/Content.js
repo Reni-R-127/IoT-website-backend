@@ -1,3 +1,14 @@
+/**
+ * File: website-backend/src/models/Content.js
+ * Purpose: Mongoose schemas and model exports for website content and submissions.
+ * Responsibilities: Defines validation and persistence contracts for courses, blogs, pricing, projects, reviews, enquiries, and notifications.
+ * Dependencies: mongoose.
+ * Data Source: MongoDB collections managed by Mongoose.
+ * Related Files: src/routes/public.js and src/routes/admin.js.
+ * Security Notes: Do not expose private submission fields or credentials in public responses.
+ * Last Updated: 2026-10-30
+ */
+
 import mongoose from "mongoose";
 
 // ==================== COURSE MODEL ====================

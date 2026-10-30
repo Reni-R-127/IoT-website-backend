@@ -1,3 +1,14 @@
+/**
+ * File: website-backend/src/routes/public.js
+ * Purpose: Public content, enquiry, review, and tracked WhatsApp-click API routes.
+ * Responsibilities: Reads published MongoDB content; validates and persists public submissions.
+ * Dependencies: Express Router, Mongoose content models, mail service.
+ * Data Source: MongoDB models defined in src/models/Content.js.
+ * Related Files: src/server.js, src/models/Content.js, src/services/mail.js.
+ * Security Notes: Public inputs must be validated and rate-limited; this route must not expose secrets.
+ * Last Updated: 2026-10-30
+ */
+
 import { Router } from "express";
 import { Course, Blog, PricingPlan, ProjectLab, Review, Enquiry, Notification } from "../models/Content.js";
 import { sendMail } from "../services/mail.js";
@@ -14,7 +25,7 @@ r.get("/blogs/:slug", async (req, res, next) => {
   try { const item = await Blog.findOne({ slug: req.params.slug, published: true }).lean(); if (!item) return res.status(404).json({ message: "Blog not found." }); res.json(item); } catch (e) { next(e); }
 });
 r.get("/pricing", async (_req, res, next) => {
-  try { res.json(await PricingPlan.find({ active: true }).sort({ sortOrder: 1, createdAt: -1 }).limit(3).lean()); } catch (e) { next(e); }
+  try { res.json(await PricingPlan.find({ active: true }).sort({ order: 1, createdAt: -1 }).limit(3).lean()); } catch (e) { next(e); }
 });
 r.get("/projects", async (_req, res, next) => {
   try { res.json(await ProjectLab.find({ active: true }).sort({ createdAt: -1 }).lean()); } catch (e) { next(e); }
@@ -27,7 +38,8 @@ r.post("/whatsapp-click", async (req, res, next) => {
   try {
     const source = String(req.body?.source || "Unknown website section").slice(0, 120);
     const item = await Notification.create({
-      type: "whatsapp_click",
+      type: "whatsapp",
+      title: "WhatsApp CTA clicked",
       source,
       message: `Visitor clicked WhatsApp from ${source}. This records a click, not confirmation that a message was sent.`,
       metadata: { page: String(req.body?.page || "").slice(0, 200), item: String(req.body?.item || "").slice(0, 150) },
@@ -57,6 +69,7 @@ r.post("/enquiries", async (req, res, next) => {
     });
     await Notification.create({
       type: "enquiry",
+      title: "New course enquiry",
       source: safeSource,
       message: `New enquiry from ${enquiry.parentName} for ${enquiry.course}.`,
       phone: enquiry.phone,

@@ -1,17 +1,27 @@
 /**
  * File: website-backend/src/models/Content.js
- * Purpose: Mongoose schemas and model exports for website content and submissions.
- * Responsibilities: Defines validation and persistence contracts for courses, blogs, pricing, projects, reviews, enquiries, and notifications.
- * Dependencies: mongoose.
- * Data Source: MongoDB collections managed by Mongoose.
- * Related Files: src/routes/public.js and src/routes/admin.js.
- * Security Notes: Do not expose private submission fields or credentials in public responses.
- * Last Updated: 2026-10-30
+ *
+ * Purpose:
+ * Mongoose schemas and model exports for website content.
+ *
+ * Models:
+ * Course, Product, Blog, PricingPlan, ProjectLab,
+ * Review, Enquiry, Notification.
+ *
+ * Database:
+ * MongoDB
+ *
+ * Security:
+ * Private fields must not be exposed through public APIs.
  */
 
 import mongoose from "mongoose";
 
-// ==================== COURSE MODEL ====================
+
+// ======================================================
+// COURSE MODEL
+// ======================================================
+
 const courseSchema = new mongoose.Schema(
   {
     title: {
@@ -19,36 +29,45 @@ const courseSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+
     slug: {
       type: String,
       required: true,
       unique: true,
       trim: true,
+      lowercase: true,
     },
+
     description: {
       type: String,
       default: "",
     },
+
     ageRange: {
       type: String,
       default: "",
     },
+
     duration: {
       type: String,
       default: "",
     },
+
     level: {
       type: String,
       default: "Beginner",
     },
+
     price: {
       type: String,
       default: "Contact us",
     },
+
     image: {
       type: String,
       default: "",
     },
+
     active: {
       type: Boolean,
       default: true,
@@ -57,7 +76,104 @@ const courseSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// ==================== BLOG MODEL ====================
+
+// ======================================================
+// PRODUCT / IOT KIT MODEL
+// ======================================================
+
+const productSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
+    slug: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+      lowercase: true,
+    },
+
+    category: {
+      type: String,
+      required: true,
+      trim: true,
+      default: "Other",
+    },
+
+    badge: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+
+    tone: {
+      type: String,
+      enum: ["blue", "green", "purple", "orange"],
+      default: "blue",
+    },
+
+    description: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+
+    features: {
+      type: [String],
+      default: [],
+    },
+
+    audience: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+
+    projects: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+
+    price: {
+      type: String,
+      default: "Contact us",
+      trim: true,
+    },
+
+    image: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+
+    popular: {
+      type: Boolean,
+      default: false,
+    },
+
+    active: {
+      type: Boolean,
+      default: true,
+    },
+
+    sortOrder: {
+      type: Number,
+      default: 0,
+    },
+  },
+  { timestamps: true }
+);
+
+
+// ======================================================
+// BLOG MODEL
+// ======================================================
+
 const blogSchema = new mongoose.Schema(
   {
     title: {
@@ -65,32 +181,39 @@ const blogSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+
     slug: {
       type: String,
       required: true,
       unique: true,
       trim: true,
     },
+
     category: {
       type: String,
       default: "IoT",
     },
+
     excerpt: {
       type: String,
       default: "",
     },
+
     content: {
       type: String,
       default: "",
     },
+
     image: {
       type: String,
       default: "",
     },
+
     published: {
       type: Boolean,
       default: false,
     },
+
     publishedAt: {
       type: Date,
     },
@@ -98,7 +221,11 @@ const blogSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// ==================== PRICING PLAN MODEL ====================
+
+// ======================================================
+// PRICING PLAN MODEL
+// ======================================================
+
 const pricingPlanSchema = new mongoose.Schema(
   {
     title: {
@@ -106,22 +233,27 @@ const pricingPlanSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+
     description: {
       type: String,
       default: "",
     },
+
     price: {
       type: String,
       required: true,
     },
+
     features: {
       type: [String],
       default: [],
     },
+
     active: {
       type: Boolean,
       default: true,
     },
+
     order: {
       type: Number,
       default: 0,
@@ -130,7 +262,11 @@ const pricingPlanSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// ==================== PROJECT LAB MODEL ====================
+
+// ======================================================
+// PROJECT LAB MODEL
+// ======================================================
+
 const projectLabSchema = new mongoose.Schema(
   {
     title: {
@@ -138,22 +274,27 @@ const projectLabSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+
     description: {
       type: String,
       default: "",
     },
+
     category: {
       type: String,
       default: "",
     },
+
     image: {
       type: String,
       default: "",
     },
+
     technologies: {
       type: [String],
       default: [],
     },
+
     active: {
       type: Boolean,
       default: true,
@@ -162,29 +303,111 @@ const projectLabSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// ==================== REVIEW MODEL ====================
+
+// ======================================================
+// REVIEW / STUDENT TESTIMONIAL MODEL
+// ======================================================
+
 const reviewSchema = new mongoose.Schema(
   {
+    studentName: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+
     name: {
       type: String,
-      required: true,
       trim: true,
+      default: "",
     },
+
     role: {
       type: String,
-      default: "Parent",
+      trim: true,
+      default: "",
     },
+
+    course: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+
+    kit: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+
+    quote: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+
+    message: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+
     rating: {
       type: Number,
       min: 1,
       max: 5,
-      required: true,
+      default: 5,
     },
-    message: {
+
+    duration: {
       type: String,
-      required: true,
+      trim: true,
+      default: "",
     },
+
+    videoUrl: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+
+    thumbnailUrl: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+
+    // Legacy compatibility fields
+    videoURL: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+
+    video: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+
+    thumbnailImage: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+
+    image: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+
     approved: {
+      type: Boolean,
+      default: false,
+    },
+
+    published: {
       type: Boolean,
       default: false,
     },
@@ -192,7 +415,11 @@ const reviewSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// ==================== ENQUIRY MODEL ====================
+
+// ======================================================
+// ENQUIRY MODEL
+// ======================================================
+
 const enquirySchema = new mongoose.Schema(
   {
     parentName: {
@@ -200,39 +427,47 @@ const enquirySchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+
     childName: {
       type: String,
       default: "",
     },
+
     childAge: {
       type: Number,
       min: 1,
       max: 18,
     },
+
     phone: {
       type: String,
       required: true,
       trim: true,
     },
+
     email: {
       type: String,
       required: true,
       lowercase: true,
       trim: true,
     },
+
     course: {
       type: String,
       required: true,
     },
+
     message: {
       type: String,
       default: "",
     },
+
     status: {
       type: String,
       enum: ["new", "contacted", "enrolled", "closed"],
       default: "new",
     },
+
     source: {
       type: String,
       default: "website",
@@ -241,7 +476,11 @@ const enquirySchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// ==================== NOTIFICATION MODEL ====================
+
+// ======================================================
+// NOTIFICATION MODEL
+// ======================================================
+
 const notificationSchema = new mongoose.Schema(
   {
     type: {
@@ -249,26 +488,32 @@ const notificationSchema = new mongoose.Schema(
       enum: ["enquiry", "whatsapp", "system"],
       default: "enquiry",
     },
+
     title: {
       type: String,
       required: true,
     },
+
     message: {
       type: String,
       default: "",
     },
+
     source: {
       type: String,
       default: "website",
     },
+
     section: {
       type: String,
       default: "",
     },
+
     read: {
       type: Boolean,
       default: false,
     },
+
     metadata: {
       type: mongoose.Schema.Types.Mixed,
       default: {},
@@ -277,12 +522,19 @@ const notificationSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// ==================== MODEL EXPORTS ====================
+
+// ======================================================
+// MODEL EXPORTS
 // Reuse existing models to avoid OverwriteModelError.
+// ======================================================
 
 export const Course =
   mongoose.models.Course ||
   mongoose.model("Course", courseSchema);
+
+export const Product =
+  mongoose.models.Product ||
+  mongoose.model("Product", productSchema);
 
 export const Blog =
   mongoose.models.Blog ||

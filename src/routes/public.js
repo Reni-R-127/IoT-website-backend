@@ -182,7 +182,6 @@ r.get("/reviews", async (_req, res, next) => {
       approved: true,
     })
       .sort({ createdAt: -1 })
-      .limit(3)
       .lean();
 
     return res.json(reviews);

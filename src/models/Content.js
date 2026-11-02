@@ -38,6 +38,13 @@ const courseSchema = new mongoose.Schema(
       lowercase: true,
     },
 
+    category: {
+      type: String,
+      default: "",
+      trim: true,
+      maxlength: 80,
+    },
+
     description: {
       type: String,
       default: "",
@@ -191,7 +198,9 @@ const blogSchema = new mongoose.Schema(
 
     category: {
       type: String,
-      default: "IoT",
+      default: "",
+      trim: true,
+      maxlength: 80,
     },
 
     excerpt: {
